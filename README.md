@@ -22,4 +22,7 @@ Se abrirá una ventana con una lista de criptomonedas populares (BTC, ETH, ADA,
 XRP, DOGE, SOL, LTC y DOT).
 Podrás consultar el precio actual, elegir el periodo histórico (1, 7, 30 o 90 días) y
 ver gráficos suavizados de su evolución. También puedes añadir criptomonedas a un
-portafolio simulado. El portafolio se puede exportar a `reporte.csv` o `reporte.txt`.
+portafolio simulado. Ahora la tabla del portafolio incluye el valor equivalente en
+bolívares (VES) consultando la tasa oficial del Banco Central de Venezuela. El
+antes de agregar una criptomoneda podrás ver una previsualización del costo en
+USD y VES. El portafolio se puede exportar a `reporte.csv` o `reporte.txt`.

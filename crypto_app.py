@@ -3,7 +3,6 @@ import urllib.request
 import urllib.error
 import tkinter as tk
 from tkinter import ttk, messagebox
-from datetime import datetime
 import csv
 
 PORTFOLIO_FILE = 'portfolio.json'
@@ -40,6 +39,13 @@ def get_history(crypto_id='bitcoin', days=30, vs_currency='usd'):
     )
     data = api_get(url)
     return data["prices"]
+
+
+def get_usd_to_ves_rate():
+    """Return the USD to bolivar rate from the Banco Central de Venezuela."""
+    url = "https://pydolarvenezuela-api.vercel.app/api/v1/bcv"
+    data = api_get(url)
+    return float(data["USD"].get("price", 0))
 
 
 class CryptoApp(tk.Tk):
@@ -84,9 +90,10 @@ class CryptoApp(tk.Tk):
 
         # Portfolio section
         ttk.Label(self, text='Portafolio').grid(row=1, column=0, pady=10, sticky='w')
-        self.port_tree = ttk.Treeview(self, columns=('amount', 'value'), show='headings')
+        self.port_tree = ttk.Treeview(self, columns=('amount', 'value', 'value_ves'), show='headings')
         self.port_tree.heading('amount', text='Cantidad')
         self.port_tree.heading('value', text='Valor (USD)')
+        self.port_tree.heading('value_ves', text='Valor (VES)')
         self.port_tree.grid(row=2, column=0, columnspan=6, padx=5, sticky='nsew')
 
         # Add crypto to portfolio
@@ -149,6 +156,21 @@ class CryptoApp(tk.Tk):
         except ValueError:
             messagebox.showerror('Error', 'Cantidad no valida')
             return
+        try:
+            price = get_price(crypto)
+            rate = get_usd_to_ves_rate()
+            value_usd = amount * price
+            value_ves = value_usd * rate
+            confirm = messagebox.askyesno(
+                'Confirmar',
+                f'Agregar {amount} {crypto}\n'
+                f'~{value_usd:.2f} USD (~{value_ves:.2f} VES)'
+            )
+            if not confirm:
+                return
+        except Exception as e:
+            messagebox.showerror('Error', f'No se pudo obtener datos: {e}')
+            return
         self.portfolio[crypto] = self.portfolio.get(crypto, 0) + amount
         self.save_portfolio()
         self.refresh_portfolio_view()
@@ -158,37 +180,55 @@ class CryptoApp(tk.Tk):
         for i in self.port_tree.get_children():
             self.port_tree.delete(i)
         total_value = 0
+        rate = 0
+        try:
+            rate = get_usd_to_ves_rate()
+        except Exception:
+            rate = 0
         for crypto, amount in self.portfolio.items():
             try:
                 price = get_price(crypto)
             except Exception:
                 price = 0
             value = amount * price
+            value_ves = value * rate
             total_value += value
-            self.port_tree.insert('', 'end', values=(f'{amount}', f'{value:.2f}'))
+            self.port_tree.insert('', 'end', values=(f'{amount}', f'{value:.2f}', f'{value_ves:.2f}'))
         self.price_label.config(text=f'Valor total: ${total_value:.2f}')
 
     def export_excel(self):
         if not self.portfolio:
             messagebox.showinfo('Info', 'Portafolio vacio')
             return
+        rate = 0
+        try:
+            rate = get_usd_to_ves_rate()
+        except Exception:
+            rate = 0
         with open('reporte.csv', 'w', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(['Cripto', 'Cantidad', 'ValorUSD'])
+            writer.writerow(['Cripto', 'Cantidad', 'ValorUSD', 'ValorVES'])
             for crypto, amount in self.portfolio.items():
                 price = get_price(crypto)
-                writer.writerow([crypto, amount, f'{amount * price:.2f}'])
+                value = amount * price
+                writer.writerow([crypto, amount, f'{value:.2f}', f'{value * rate:.2f}'])
         messagebox.showinfo('Exportar', 'Reporte guardado como reporte.csv')
 
     def export_pdf(self):
         if not self.portfolio:
             messagebox.showinfo('Info', 'Portafolio vacio')
             return
+        rate = 0
+        try:
+            rate = get_usd_to_ves_rate()
+        except Exception:
+            rate = 0
         with open('reporte.txt', 'w') as f:
-            f.write('Cripto\tCantidad\tValorUSD\n')
+            f.write('Cripto\tCantidad\tValorUSD\tValorVES\n')
             for crypto, amount in self.portfolio.items():
                 price = get_price(crypto)
-                f.write(f'{crypto}\t{amount}\t{amount * price:.2f}\n')
+                value = amount * price
+                f.write(f'{crypto}\t{amount}\t{value:.2f}\t{value * rate:.2f}\n')
         messagebox.showinfo('Exportar', 'Reporte guardado como reporte.txt')
 
 
