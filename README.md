@@ -18,7 +18,8 @@ Ejecuta la aplicación principal:
 python3 crypto_app.py
 ```
 
-Se abrirá una ventana con la lista de criptomonedas disponibles.
-Podrás consultar el precio actual, ver un gráfico histórico de 30 días y
-añadir criptomonedas a un portafolio simulado. El portafolio se puede
-exportar a `reporte.csv` o `reporte.txt`.
+Se abrirá una ventana con una lista de criptomonedas populares (BTC, ETH, ADA,
+XRP, DOGE, SOL, LTC y DOT).
+Podrás consultar el precio actual, elegir el periodo histórico (1, 7, 30 o 90 días) y
+ver gráficos suavizados de su evolución. También puedes añadir criptomonedas a un
+portafolio simulado. El portafolio se puede exportar a `reporte.csv` o `reporte.txt`.

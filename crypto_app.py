@@ -10,7 +10,12 @@ PORTFOLIO_FILE = 'portfolio.json'
 CRYPTO_OPTIONS = [
     ('bitcoin', 'BTC'),
     ('ethereum', 'ETH'),
-    ('cardano', 'ADA')
+    ('cardano', 'ADA'),
+    ('ripple', 'XRP'),
+    ('dogecoin', 'DOGE'),
+    ('solana', 'SOL'),
+    ('litecoin', 'LTC'),
+    ('polkadot', 'DOT'),
 ]
 
 
@@ -41,7 +46,11 @@ class CryptoApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title('Monitoreo de Criptomonedas')
-        self.geometry('600x400')
+        self.geometry('700x500')
+        self.configure(bg='#f0f0f0')
+        style = ttk.Style(self)
+        style.configure('TLabel', font=('Helvetica', 12))
+        style.configure('TButton', font=('Helvetica', 12))
         self.portfolio = self.load_portfolio()
         self.create_widgets()
 
@@ -69,14 +78,16 @@ class CryptoApp(tk.Tk):
         self.price_label = ttk.Label(self, textvariable=self.price_var)
         self.price_label.grid(row=0, column=2, padx=5)
         ttk.Button(self, text='Actualizar', command=self.update_price).grid(row=0, column=3, padx=5)
-        ttk.Button(self, text='Ver gráfico', command=self.show_history).grid(row=0, column=4, padx=5)
+        self.days_var = tk.IntVar(value=30)
+        ttk.OptionMenu(self, self.days_var, 30, 1, 7, 30, 90).grid(row=0, column=4, padx=5)
+        ttk.Button(self, text='Ver gráfico', command=self.show_history).grid(row=0, column=5, padx=5)
 
         # Portfolio section
         ttk.Label(self, text='Portafolio').grid(row=1, column=0, pady=10, sticky='w')
         self.port_tree = ttk.Treeview(self, columns=('amount', 'value'), show='headings')
         self.port_tree.heading('amount', text='Cantidad')
         self.port_tree.heading('value', text='Valor (USD)')
-        self.port_tree.grid(row=2, column=0, columnspan=5, padx=5, sticky='nsew')
+        self.port_tree.grid(row=2, column=0, columnspan=6, padx=5, sticky='nsew')
 
         # Add crypto to portfolio
         self.amount_var = tk.StringVar()
@@ -87,12 +98,12 @@ class CryptoApp(tk.Tk):
 
         # Canvas for simple history graph
         self.canvas = tk.Canvas(self, width=500, height=200, bg='white')
-        self.canvas.grid(row=5, column=0, columnspan=5, pady=10, sticky='nsew')
+        self.canvas.grid(row=5, column=0, columnspan=6, pady=10, sticky='nsew')
 
         self.grid_rowconfigure(5, weight=1)
 
         self.grid_rowconfigure(2, weight=1)
-        self.grid_columnconfigure(4, weight=1)
+        self.grid_columnconfigure(5, weight=1)
         self.refresh_portfolio_view()
         self.update_price()
 
@@ -107,7 +118,7 @@ class CryptoApp(tk.Tk):
     def show_history(self):
         crypto = self.crypto_var.get()
         try:
-            data = get_history(crypto, days=30)
+            data = get_history(crypto, days=self.days_var.get())
             prices = [p[1] for p in data]
             self.canvas.delete('all')
             if not prices:
@@ -124,7 +135,10 @@ class CryptoApp(tk.Tk):
                 y = h - (price - min_p) * h / span
                 points.append((x, y))
             for i in range(len(points) - 1):
-                self.canvas.create_line(points[i][0], points[i][1], points[i+1][0], points[i+1][1], fill='blue')
+                self.canvas.create_line(
+                    points[i][0], points[i][1], points[i+1][0], points[i+1][1],
+                    fill='blue', smooth=True, width=2
+                )
         except Exception as e:
             messagebox.showerror('Error', f'No se pudo obtener el historico: {e}')
 
