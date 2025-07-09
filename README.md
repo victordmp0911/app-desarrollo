@@ -6,20 +6,9 @@ y gestionar un portafolio simulado.
 
 ## Requisitos
 
-- Python 3
-- Las siguientes dependencias instaladas con `pip`:
-  - requests
-  - matplotlib
-  - pandas
-  - openpyxl
-  - reportlab
-  - PyQt5 (para la interfaz gráfica se usa Tkinter por defecto, pero PyQt5 es opcional)
+- Python 3 (incluye Tkinter y las bibliotecas usadas)
 
-Instálalas con:
-
-```bash
-pip install requests matplotlib pandas openpyxl reportlab PyQt5
-```
+No es necesario instalar paquetes adicionales.
 
 ## Uso
 
@@ -30,6 +19,6 @@ python3 crypto_app.py
 ```
 
 Se abrirá una ventana con la lista de criptomonedas disponibles.
-Podrás consultar el precio actual, ver un gráfico histórico de 30 días
-y añadir criptomonedas a un portafolio simulado. También es posible exportar
-el portafolio a un archivo Excel o PDF.
+Podrás consultar el precio actual, ver un gráfico histórico de 30 días y
+añadir criptomonedas a un portafolio simulado. El portafolio se puede
+exportar a `reporte.csv` o `reporte.txt`.

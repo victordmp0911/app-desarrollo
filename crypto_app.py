@@ -1,12 +1,10 @@
 import json
-import requests
+import urllib.request
+import urllib.error
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
-
-import matplotlib.pyplot as plt
-import pandas as pd
-from reportlab.platypus import SimpleDocTemplate, Table
+import csv
 
 PORTFOLIO_FILE = 'portfolio.json'
 CRYPTO_OPTIONS = [
@@ -16,19 +14,27 @@ CRYPTO_OPTIONS = [
 ]
 
 
+def api_get(url):
+    with urllib.request.urlopen(url, timeout=10) as response:
+        return json.loads(response.read().decode())
+
+
 def get_price(crypto_id='bitcoin', vs_currency='usd'):
-    url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto_id}&vs_currencies={vs_currency}'
-    response = requests.get(url, timeout=10)
-    response.raise_for_status()
-    data = response.json()
+    url = (
+        "https://api.coingecko.com/api/v3/simple/price"
+        f"?ids={crypto_id}&vs_currencies={vs_currency}"
+    )
+    data = api_get(url)
     return data[crypto_id][vs_currency]
 
 
 def get_history(crypto_id='bitcoin', days=30, vs_currency='usd'):
-    url = f'https://api.coingecko.com/api/v3/coins/{crypto_id}/market_chart?vs_currency={vs_currency}&days={days}'
-    response = requests.get(url, timeout=10)
-    response.raise_for_status()
-    return response.json()['prices']
+    url = (
+        f"https://api.coingecko.com/api/v3/coins/{crypto_id}/market_chart?"
+        f"vs_currency={vs_currency}&days={days}"
+    )
+    data = api_get(url)
+    return data["prices"]
 
 
 class CryptoApp(tk.Tk):
@@ -79,6 +85,12 @@ class CryptoApp(tk.Tk):
         ttk.Button(self, text='Exportar Excel', command=self.export_excel).grid(row=4, column=1, pady=10)
         ttk.Button(self, text='Exportar PDF', command=self.export_pdf).grid(row=4, column=2, pady=10)
 
+        # Canvas for simple history graph
+        self.canvas = tk.Canvas(self, width=500, height=200, bg='white')
+        self.canvas.grid(row=5, column=0, columnspan=5, pady=10, sticky='nsew')
+
+        self.grid_rowconfigure(5, weight=1)
+
         self.grid_rowconfigure(2, weight=1)
         self.grid_columnconfigure(4, weight=1)
         self.refresh_portfolio_view()
@@ -96,15 +108,23 @@ class CryptoApp(tk.Tk):
         crypto = self.crypto_var.get()
         try:
             data = get_history(crypto, days=30)
-            dates = [datetime.fromtimestamp(p[0]/1000) for p in data]
             prices = [p[1] for p in data]
-            plt.figure(figsize=(8,4))
-            plt.plot(dates, prices)
-            plt.title(f'Historico 30 dias - {crypto}')
-            plt.xlabel('Fecha')
-            plt.ylabel('Precio (USD)')
-            plt.tight_layout()
-            plt.show()
+            self.canvas.delete('all')
+            if not prices:
+                return
+            w = int(self.canvas['width'])
+            h = int(self.canvas['height'])
+            max_p = max(prices)
+            min_p = min(prices)
+            span = max_p - min_p or 1
+            x_scale = w / max(1, len(prices) - 1)
+            points = []
+            for i, price in enumerate(prices):
+                x = i * x_scale
+                y = h - (price - min_p) * h / span
+                points.append((x, y))
+            for i in range(len(points) - 1):
+                self.canvas.create_line(points[i][0], points[i][1], points[i+1][0], points[i+1][1], fill='blue')
         except Exception as e:
             messagebox.showerror('Error', f'No se pudo obtener el historico: {e}')
 
@@ -138,26 +158,24 @@ class CryptoApp(tk.Tk):
         if not self.portfolio:
             messagebox.showinfo('Info', 'Portafolio vacio')
             return
-        data = []
-        for crypto, amount in self.portfolio.items():
-            price = get_price(crypto)
-            data.append({'Cripto': crypto, 'Cantidad': amount, 'ValorUSD': amount * price})
-        df = pd.DataFrame(data)
-        df.to_excel('reporte.xlsx', index=False)
-        messagebox.showinfo('Exportar', 'Reporte guardado como reporte.xlsx')
+        with open('reporte.csv', 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Cripto', 'Cantidad', 'ValorUSD'])
+            for crypto, amount in self.portfolio.items():
+                price = get_price(crypto)
+                writer.writerow([crypto, amount, f'{amount * price:.2f}'])
+        messagebox.showinfo('Exportar', 'Reporte guardado como reporte.csv')
 
     def export_pdf(self):
         if not self.portfolio:
             messagebox.showinfo('Info', 'Portafolio vacio')
             return
-        data = [['Cripto', 'Cantidad', 'ValorUSD']]
-        for crypto, amount in self.portfolio.items():
-            price = get_price(crypto)
-            data.append([crypto, str(amount), f'{amount * price:.2f}'])
-        doc = SimpleDocTemplate('reporte.pdf')
-        table = Table(data)
-        doc.build([table])
-        messagebox.showinfo('Exportar', 'Reporte guardado como reporte.pdf')
+        with open('reporte.txt', 'w') as f:
+            f.write('Cripto\tCantidad\tValorUSD\n')
+            for crypto, amount in self.portfolio.items():
+                price = get_price(crypto)
+                f.write(f'{crypto}\t{amount}\t{amount * price:.2f}\n')
+        messagebox.showinfo('Exportar', 'Reporte guardado como reporte.txt')
 
 
 if __name__ == '__main__':
