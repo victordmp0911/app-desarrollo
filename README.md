@@ -1,9 +1,9 @@
 # Crypto Portfolio Simulator
 
-This project provides a simple command line tool to monitor cryptocurrency prices
-using the CoinGecko API and manage a simulated portfolio. It can display current
-prices, plot historical prices with matplotlib, store a local portfolio in a JSON
-file and export reports in Excel or PDF formats.
+This project provides a simple desktop application built with Tkinter to monitor
+cryptocurrency prices using the CoinGecko API and manage a simulated portfolio.
+It can display current prices, plot historical prices with matplotlib, store a
+local portfolio in a JSON file and export reports in Excel or PDF formats.
 
 ## Requirements
 - Python 3
@@ -19,10 +19,12 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+Run the graphical application with:
+```bash
+python -m crypto_app
 ```
-python -m crypto_app price bitcoin ethereum
-python -m crypto_app history bitcoin --days 7
-python -m crypto_app add bitcoin 0.5
-python -m crypto_app portfolio
-python -m crypto_app export --excel --pdf
+
+The previous command line interface is still available via:
+```bash
+python -m crypto_app.main price bitcoin
 ```
