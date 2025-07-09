@@ -1,7 +1,6 @@
 # app-desarrollo
 
-Este repositorio contiene un ejemplo mínimo de una aplicación de escritorio
-utilizando Python y Tkinter.
+Este repositorio contiene un ejemplo mínimo de una aplicación de escritorio utilizando Python y Tkinter.
 
 ## Requisitos
 
