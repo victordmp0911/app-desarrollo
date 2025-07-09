@@ -4,6 +4,8 @@ import urllib.error
 import tkinter as tk
 from tkinter import ttk, messagebox
 import csv
+import os
+import sys
 
 PORTFOLIO_FILE = 'portfolio.json'
 CRYPTO_OPTIONS = [
@@ -233,5 +235,18 @@ class CryptoApp(tk.Tk):
 
 
 if __name__ == '__main__':
-    app = CryptoApp()
-    app.mainloop()
+    if '--cli' in sys.argv:
+        print('Precios actuales:')
+        for crypto, symbol in CRYPTO_OPTIONS:
+            try:
+                price = get_price(crypto)
+                print(f'{symbol}: ${price}')
+            except Exception as e:
+                print(f'{symbol}: error {e}')
+    else:
+        try:
+            app = CryptoApp()
+            app.mainloop()
+        except tk.TclError as e:
+            print('No se pudo abrir la interfaz gráfica.')
+            print('Ejecuta con --cli o usa un entorno de escritorio.')

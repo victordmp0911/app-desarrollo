@@ -12,10 +12,17 @@ No es necesario instalar paquetes adicionales.
 
 ## Uso
 
-Ejecuta la aplicación principal:
+Ejecuta la aplicación principal (requiere entorno de escritorio):
 
 ```bash
 python3 crypto_app.py
+```
+
+Si no cuentas con interfaz gráfica o la aplicación indica un error de
+`DISPLAY`, puedes ejecutarla en modo consola:
+
+```bash
+python3 crypto_app.py --cli
 ```
 
 Se abrirá una ventana con una lista de criptomonedas populares (BTC, ETH, ADA,
