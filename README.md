@@ -4,9 +4,10 @@ Este repositorio contiene un ejemplo mínimo de una aplicación de escritorio ut
 
 ## Requisitos
 
-- Python 3
+- Python 3 (no se necesitan dependencias adicionales)
 
-Tkinter suele estar incluido con Python en la mayoría de sistemas operativos.
+El módulo Tkinter viene de serie con Python, por lo que basta con tener Python
+instalado para ejecutar la aplicación.
 
 ## Uso
 
