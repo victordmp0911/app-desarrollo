@@ -57,8 +57,11 @@ class CryptoApp(tk.Tk):
         self.geometry('700x500')
         self.configure(bg='#f0f0f0')
         style = ttk.Style(self)
+        style.theme_use('clam')
         style.configure('TLabel', font=('Helvetica', 12))
         style.configure('TButton', font=('Helvetica', 12))
+        style.configure('Treeview', font=('Helvetica', 11), rowheight=24)
+        style.configure('Treeview.Heading', font=('Helvetica', 12, 'bold'))
         self.portfolio = self.load_portfolio()
         self.create_widgets()
 
@@ -92,13 +95,17 @@ class CryptoApp(tk.Tk):
 
         # Portfolio section
         ttk.Label(self, text='Portafolio').grid(row=1, column=0, pady=10, sticky='w')
-        self.port_tree = ttk.Treeview(self, columns=('amount', 'value', 'value_ves'), show='headings')
+        self.port_tree = ttk.Treeview(self, columns=('amount', 'value', 'value_ves'),
+                                      show='headings')
         self.port_tree.heading('amount', text='Cantidad')
         self.port_tree.heading('value', text='Valor (USD)')
         self.port_tree.heading('value_ves', text='Valor (VES)')
         self.port_tree.grid(row=2, column=0, columnspan=6, padx=5, sticky='nsew')
+        self.port_tree.tag_configure('odd', background='#f7f7f7')
+        self.port_tree.tag_configure('even', background='#e6e6e6')
 
         # Add crypto to portfolio
+        ttk.Label(self, text='Cantidad:').grid(row=3, column=0, sticky='e', padx=5)
         self.amount_var = tk.StringVar()
         ttk.Entry(self, textvariable=self.amount_var).grid(row=3, column=1, padx=5)
         ttk.Button(self, text='Agregar', command=self.add_to_portfolio).grid(row=3, column=2, padx=5)
@@ -187,7 +194,7 @@ class CryptoApp(tk.Tk):
             rate = get_usd_to_ves_rate()
         except Exception:
             rate = 0
-        for crypto, amount in self.portfolio.items():
+        for idx, (crypto, amount) in enumerate(self.portfolio.items()):
             try:
                 price = get_price(crypto)
             except Exception:
@@ -195,7 +202,10 @@ class CryptoApp(tk.Tk):
             value = amount * price
             value_ves = value * rate
             total_value += value
-            self.port_tree.insert('', 'end', values=(f'{amount}', f'{value:.2f}', f'{value_ves:.2f}'))
+            tag = 'even' if idx % 2 == 0 else 'odd'
+            self.port_tree.insert('', 'end',
+                                 values=(f'{amount}', f'{value:.2f}', f'{value_ves:.2f}'),
+                                 tags=(tag,))
         self.price_label.config(text=f'Valor total: ${total_value:.2f}')
 
     def export_excel(self):

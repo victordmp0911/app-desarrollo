@@ -1,35 +1,30 @@
 # Aplicación de Monitoreo de Criptomonedas
 
-Este proyecto contiene un ejemplo sencillo de una aplicación de escritorio escrita en Python.
-Permite consultar precios de criptomonedas en tiempo real, visualizar su histórico en gráficos
-y gestionar un portafolio simulado.
-
-## Requisitos
-
-- Python 3 (incluye Tkinter y las bibliotecas usadas)
-
-No es necesario instalar paquetes adicionales.
+Este proyecto muestra una aplicación de escritorio escrita en Python que permite
+consultar precios de criptomonedas, ver su histórico en gráficos y manejar un
+portafolio simulado. Todo se implementa únicamente con bibliotecas incluidas en
+la instalación estándar de Python, por lo que no es necesario instalar paquetes
+adicionales.
 
 ## Uso
 
-Ejecuta la aplicación principal (requiere entorno de escritorio):
+Ejecuta la aplicación principal (requiere un entorno gráfico):
 
 ```bash
 python3 crypto_app.py
 ```
 
-Si no cuentas con interfaz gráfica o la aplicación indica un error de
-`DISPLAY`, puedes ejecutarla en modo consola:
+Si tu sistema no cuenta con interfaz gráfica o recibes un error relacionado con
+`DISPLAY`, puedes usar el modo de consola:
 
 ```bash
 python3 crypto_app.py --cli
 ```
 
-Se abrirá una ventana con una lista de criptomonedas populares (BTC, ETH, ADA,
-XRP, DOGE, SOL, LTC y DOT).
-Podrás consultar el precio actual, elegir el periodo histórico (1, 7, 30 o 90 días) y
-ver gráficos suavizados de su evolución. También puedes añadir criptomonedas a un
-portafolio simulado. Ahora la tabla del portafolio incluye el valor equivalente en
-bolívares (VES) consultando la tasa oficial del Banco Central de Venezuela. El
-antes de agregar una criptomoneda podrás ver una previsualización del costo en
-USD y VES. El portafolio se puede exportar a `reporte.csv` o `reporte.txt`.
+En la ventana principal se listan varias criptomonedas populares (BTC, ETH, ADA,
+XRP, DOGE, SOL, LTC y DOT). Se muestra su precio actual y puedes elegir ver su
+histórico (1, 7, 30 o 90 días) en un gráfico con líneas suavizadas. El
+portafolio simulado presenta el valor equivalente en bolívares calculado con la
+tasa oficial del Banco Central de Venezuela. Antes de agregar una criptomoneda
+aparecerá una previsualización del costo en USD y VES. Puedes exportar tu
+portafolio a `reporte.csv` o `reporte.txt`.
