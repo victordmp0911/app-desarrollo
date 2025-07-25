@@ -6,14 +6,13 @@ import com.example.devplanner.data.local.dao.ProjectDao
 import com.example.devplanner.data.local.entity.MemberEntity
 import com.example.devplanner.data.local.entity.ProjectEntity
 import com.example.devplanner.data.local.entity.TaskEntity
-import com.example.devplanner.data.local.entity.MilestoneEntity,
-        MilestoneEntity
+import com.example.devplanner.data.local.entity.MilestoneEntity
 
 @Database(
     entities = [
         ProjectEntity::class,
         MemberEntity::class,
-        TaskEntity,
+        TaskEntity::class,
         MilestoneEntity::class
     ],
     version = 1,
