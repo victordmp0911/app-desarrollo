@@ -1,0 +1,4 @@
+<resources>
+    <!-- Minimal theme to satisfy manifest reference -->
+    <style name="Theme.Material3.DayNight.NoActionBar" parent="@android:style/Theme.Material.Light.NoActionBar"/>
+</resources>
