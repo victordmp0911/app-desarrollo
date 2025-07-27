@@ -3,14 +3,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../domain/models/sdlc_plan.dart';
 import 'ia_client.dart';
+import 'package:sdlc_buddy/src/core/app_config.dart';
 
 class OpenAIClient implements IAClient {
   final Dio _dio = Dio();
 
   @override
   Future<SDLCPlan> generatePlan(String requirement, {Map<String, dynamic>? options}) async {
-    final apiKey = dotenv.env['OPENAI_API_KEY'];
-    final response = await _dio.post(
+  final apiKey = AppConfig.openAiKey;
+  final response = await _dio.post(
       'https://api.openai.com/v1/chat/completions',
       options: Options(headers: {
         'Authorization': 'Bearer ' + (apiKey ?? ''),

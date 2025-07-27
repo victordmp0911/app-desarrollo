@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sdlc_buddy/src/core/app_config.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -14,7 +15,20 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: dotenv.env['OPENAI_API_KEY']);
+    _controller = TextEditingController(text: AppConfig.openAiKey);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    AppConfig.setOpenAiKey(_controller.text);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('API Key actualizada')),
+    );
   }
 
   @override
@@ -31,9 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () async {
-                await dotenv.env['OPENAI_API_KEY'] = _controller.text;
-              },
+              onPressed: _save,
               child: const Text('Save'),
             )
           ],

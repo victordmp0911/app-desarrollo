@@ -2,13 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // <-- IMPORTANTE
+
 import 'src/ui/pages/home_page.dart';
 import 'src/ui/pages/history_page.dart';
 import 'src/ui/pages/settings_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Carga las variables de entorno (.env)
   await dotenv.load(fileName: '.env');
+
+  // Inicializa Hive
+  await Hive.initFlutter();
+
+  // Abre la caja que vas a usar, por ejemplo 'settings' o 'history'
+  await Hive.openBox('settings');
+  await Hive.openBox('history');
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
