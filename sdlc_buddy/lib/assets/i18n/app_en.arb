@@ -1,7 +1,7 @@
 {
-  "appTitle": "SDLC Buddy",
-  "homePrompt": "Enter your software requirement",
-  "generateButton": "Generate SDLC Plan",
+  "appTitle": "SoftDev",
+  "homePrompt": "Ingresa el requerimiento",
+  "generateButton": "Gerar plan de desarollo",
   "history": "History",
   "settings": "Settings",
   "language": "Language",

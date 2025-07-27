@@ -5,6 +5,6 @@ import 'package:sdlc_buddy/main.dart';
 void main() {
   testWidgets('App starts', (tester) async {
     await tester.pumpWidget(const MyApp());
-    expect(find.text('SDLC Buddy'), findsOneWidget);
+    expect(find.text('SoftDev'), findsOneWidget);
   });
 }

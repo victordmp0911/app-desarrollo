@@ -1,27 +1,55 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hive_flutter/hive_flutter.dart'; // <-- IMPORTANTE
+import 'package:hive_flutter/hive_flutter.dart';
 
+import 'src/core/config/app_config.dart';
+import 'src/core/storage/hive_service.dart';
 import 'src/ui/pages/home_page.dart';
 import 'src/ui/pages/history_page.dart';
 import 'src/ui/pages/settings_page.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  runApp(const AppBootstrap()); // <-- SIN ProviderScope aquí
+}
 
-  // Carga las variables de entorno (.env)
-  await dotenv.load(fileName: '.env');
+/// Bootstrap para asegurarnos de que Hive (y dotenv cuando aplique) estén listos
+class AppBootstrap extends StatelessWidget {
+  const AppBootstrap({super.key});
 
-  // Inicializa Hive
-  await Hive.initFlutter();
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _initialize(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
 
-  // Abre la caja que vas a usar, por ejemplo 'settings' o 'history'
-  await Hive.openBox('settings');
-  await Hive.openBox('history');
+        // <-- ProviderScope DESPUÉS de que Hive esté listo
+        return const ProviderScope(child: MyApp());
+      },
+    );
+  }
 
-  runApp(const ProviderScope(child: MyApp()));
+  Future<void> _initialize() async {
+    if (!kIsWeb) {
+      try {
+        await dotenv.load(fileName: '.env');
+      } catch (_) {/* ignore */}
+    }
+
+    await Hive.initFlutter();
+    await HiveService.ensureBoxes();        // abrir boxes aquí
+    await HiveService.bootstrapAppConfig(); // cargar config si aplica
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +58,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SDLC Buddy',
+      title: 'SoftDev',
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
       localizationsDelegates: const [

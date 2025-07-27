@@ -1,4 +1,4 @@
-# SDLC Buddy
+# SoftDev
 
 This is a sample Flutter app that generates a software development life cycle (SDLC) plan using an AI API.
 

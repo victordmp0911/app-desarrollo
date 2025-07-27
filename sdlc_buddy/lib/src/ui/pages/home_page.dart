@@ -35,7 +35,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('SDLC Buddy')),
+      appBar: AppBar(title: Text('SoftDev')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -51,7 +51,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loading ? null : _generate,
-              child: Text(_loading ? 'Loading...' : 'Generate SDLC Plan'),
+              child: Text(_loading ? 'Loading...' : 'Generar plan de desarrollo'),
             ),
             if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
             if (_plan != null) Expanded(child: ListView(children: [
