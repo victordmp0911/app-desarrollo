@@ -1,0 +1,17 @@
+{
+  "appTitle": "SDLC Buddy",
+  "homePrompt": "Enter your software requirement",
+  "generateButton": "Generate SDLC Plan",
+  "history": "History",
+  "settings": "Settings",
+  "language": "Language",
+  "theme": "Theme",
+  "dark": "Dark",
+  "light": "Light",
+  "system": "System",
+  "apiKey": "API Key",
+  "save": "Save",
+  "loading": "Loading...",
+  "error": "An error occurred",
+  "empty": "No data"
+}
